@@ -55,7 +55,7 @@ int readFile(std::string &file, std::vector<KP::studentData> &allstudentData, ch
 	std::string token;
 	KP::studentData myStudentData;
 	stringstream ss;
-	fstream myInputfile;
+	ifstream myInputfile;
 
 	myInputfile.open(file.c_str(), ios::in);
 
@@ -77,7 +77,10 @@ int readFile(std::string &file, std::vector<KP::studentData> &allstudentData, ch
 		//get the midterm 2
 		std::getline(ss, token, char_to_search_for);
 		myStudentData.midterm2=stringToInt(token.c_str());
-
+		if(std::getline(ss, token, char_to_search_for)) {
+				std::getline(ss, token, char_to_search_for);
+				myStudentData.finalgrade = stringToInt(token.c_str());
+				}
 		allstudentData.push_back(myStudentData);
 	}
 	myInputfile.close();
