@@ -51,12 +51,7 @@ double stringToDouble(const char *myString) {
 int readFile(std::string &file, std::vector<KP::studentData> &allstudentData, char separator_char=KP::SEPERATOR_CHAR ){
 
 
-/***
- * Iterates over all students in vector, and averages midterm1 and midterm2 to get the finalgrade
- * @param allstudentData
- * @return VECTOR_CONTAINS_NO_STUDENTS
- *         SUCCESS
- */
+
 	allstudentData.clear();
 	std::string line;
 	std::string token;
@@ -83,7 +78,23 @@ int readFile(std::string &file, std::vector<KP::studentData> &allstudentData, ch
 
 
 }
-int calculateFinalGrade(std::vector<KP::studentData> &allstudentData);
+/***
+ * Iterates over all students in vector, and averages midterm1 and midterm2 to get the finalgrade
+ * @param allstudentData
+ * @return VECTOR_CONTAINS_NO_STUDENTS
+ *         SUCCESS
+ */
+int calculateFinalGrade(std::vector<KP::studentData> &allstudentData){
+
+	if (allstudentData.empty()){
+		return KP::VECTOR_CONTAINS_NO_STUDENTS;
+	}
+	for(int a = 1; a <allstudentData.size(); a++){
+		allstudentData[a].finalgrade = (allstudentData[a].midterm1+allstudentData[a].midterm2)/2;
+	}
+	return KP::SUCCESS;
+
+	}
 //void extractFailingStudents(double failgrade = FAILGRADE);
 
 /***
@@ -96,7 +107,35 @@ int calculateFinalGrade(std::vector<KP::studentData> &allstudentData);
  *         COULD_NOT_OPEN_FILE
  *         SUCCESS
  */
-int writeFile(std::string &file, std::vector<KP::studentData> &allstudentData, char separator_char=KP::SEPERATOR_CHAR );
+int writeFile(std::string &file, std::vector<KP::studentData> &allstudentData, char separator_char=KP::SEPERATOR_CHAR ){
+	ofstream myOutfile;
+	myOutfile.open(file);
+	if (!myOutfile.is_open()){
+			return KP::COULD_NOT_OPEN_FILE;
+	if(allstudentData.empty()){
+		return KP:VECTOR_CONTAINTS_NO_STUDENT;
+
+	}
+	for(int a = 0 ; a < allstudentData.size();a++){
+		myOutfile << allstudentData[a].name;
+		myOutfile << " ";
+		myOutfile << allstudentData[a].midterm1
+		myOutfile << " ";
+		myOutfile << allstudentData[a].midterm2
+		myOutfile << " ";
+		myOutfile << allstudentData[a].finalgrade
+		if(!(i == (allstudentData.size() - 1))){
+			myOutfile << "\n";
+
+		}
+
+	}
+	myOutfile.close();
+	return KP:SUCCESS;
+
+
+}
+
 
 //sorts studentdata based on SORT_TYPE
 /***
@@ -106,7 +145,7 @@ int writeFile(std::string &file, std::vector<KP::studentData> &allstudentData, c
  * @return VECTOR_CONTAINS_NO_STUDENTS
  *         SUCCESS
  */
-int sortStudentData(std::vector<KP::studentData> &allstudentData,KP::SORT_TYPE st);
+int sortStudentData(std::vector<KP::studentData> &allstudentData,KP::SORT_TYPE st){
 
 //if myString does not contain a string rep of number returns 0
 //if int not large enough has undefined behaviour, very fragile
