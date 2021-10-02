@@ -1,4 +1,4 @@
 henry 98 100 99
 ansel 70 80 75
-tailer 0 100 50
 brian 1 4 2.5
+tailer 0 100 -1

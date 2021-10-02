@@ -50,17 +50,25 @@ double stringToDouble(const char *myString) {
  */
 int readFile(std::string &file, std::vector<KP::studentData> &allstudentData, char char_to_search_for) {
 	allstudentData.clear();
+
 	std::string line;
 	std::string token;
 	KP::studentData myStudentData;
 	stringstream ss;
 	fstream myInputfile;
+
 	myInputfile.open(file.c_str(), ios::in);
+
 	if (!myInputfile.is_open()){
-		return KP::COULD_NOT_OPEN_FILE;}
+		return KP::COULD_NOT_OPEN_FILE;
+	}
+
 	while (std::getline(myInputfile,line)) {
-		std::getline(myInputfile, line);
+		ss.clear();
+
 		ss.str(line);
+
+		myStudentData.clear();
 		//get the name
 		std::getline(ss, myStudentData.name, char_to_search_for);
 		//get the midterm 1
@@ -69,8 +77,10 @@ int readFile(std::string &file, std::vector<KP::studentData> &allstudentData, ch
 		//get the midterm 2
 		std::getline(ss, token, char_to_search_for);
 		myStudentData.midterm2=stringToInt(token.c_str());
+
 		allstudentData.push_back(myStudentData);
 	}
+	myInputfile.close();
 	return KP::SUCCESS;
 
 }
@@ -88,7 +98,7 @@ int calculateFinalGrade(std::vector<KP::studentData> &allstudentData){
 	if (allstudentData.empty()){
 		return KP::VECTOR_CONTAINS_NO_STUDENTS;
 	}
-	for(int a = 1; a < allstudentData.size(); a++){
+	for(long unsigned int a = 1; a < allstudentData.size(); a++){
 		allstudentData[a].finalgrade = (allstudentData[a].midterm1+allstudentData[a].midterm2)/2;
 	}
 	return KP::SUCCESS;
@@ -108,27 +118,20 @@ int calculateFinalGrade(std::vector<KP::studentData> &allstudentData){
  */
 
 int writeFile(std::string &file, std::vector<KP::studentData> &allstudentData, char char_to_search_for){
-	fstream myOutfile;
-	myOutfile.open(file);
+	ofstream myOutfile;
+	if(allstudentData.empty()){
+			return KP::VECTOR_CONTAINS_NO_STUDENTS;
+		}
+	myOutfile.open(file, ios::out);
+
 	if (!myOutfile.is_open()){
 		return KP::COULD_NOT_OPEN_FILE;
 	}
-	if(allstudentData.empty()){
-		return KP::VECTOR_CONTAINTS_NO_STUDENTS;
-	}
-	for(int a = 0 ; a < allstudentData.size();a++){
 
-		myOutfile << allstudentData[a].name;
-		myOutfile << " ";
-		myOutfile << allstudentData[a].midterm1;
-		myOutfile << " ";
-		myOutfile << allstudentData[a].midterm2;
-		myOutfile << " ";
-		myOutfile << allstudentData[a].finalgrade;
-		if(!(a == (allstudentData.size() - 1))){
-			myOutfile << "\n";
+	for(long unsigned int a = 0 ; a < allstudentData.size();a++){
+		myOutfile << allstudentData[a].name << " " << allstudentData[a].midterm1 << " " << allstudentData[a].midterm2 << " " << allstudentData[a].finalgrade << "\n";
 
-		}
+
 
 	}
 	myOutfile.close();
@@ -138,8 +141,6 @@ int writeFile(std::string &file, std::vector<KP::studentData> &allstudentData, c
 }
 
 
-
-//sorts studentdata based on SORT_TYPE
 /***
  *
  * @param allstudentData - a vector that holds student data info that will be written to file
@@ -159,7 +160,7 @@ int sortStudentData(std::vector<KP::studentData> &allstudentData,KP::SORT_TYPE s
 	KP::SORT_TYPE finalgrade = KP::FINAL_GRADE;
 
 	//checks for an empty student data vector
-	if (allstudentData.size() < 2){
+	if (allstudentData.empty()){
 		return KP::VECTOR_CONTAINS_NO_STUDENTS;;
 	}
 
