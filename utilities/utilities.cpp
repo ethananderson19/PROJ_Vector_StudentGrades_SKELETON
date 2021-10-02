@@ -48,36 +48,35 @@ double stringToDouble(const char *myString) {
  * @return COULD_NOT_OPEN_FILE
  *         SUCCESS
  */
-int readFile(std::string &file, std::vector<KP::studentData> &allstudentData, char separator_char=KP::SEPERATOR_CHAR ){
-
-
-
+int readFile(std::string &file, std::vector<KP::studentData> &allstudentData, char char_to_search_for) {
 	allstudentData.clear();
 	std::string line;
 	std::string token;
 	KP::studentData myStudentData;
 	stringstream ss;
-	ifstream myInputfile;
+	fstream myInputfile;
 	myInputfile.open(file.c_str(), ios::in);
-	if (!myInputfile.is_open())
-			return false;
-	while (!myInputfile.eof()) {
+	if (!myInputfile.is_open()){
+		return KP::COULD_NOT_OPEN_FILE;}
+	while (std::getline(myInputfile,line)) {
 		std::getline(myInputfile, line);
-				ss.str(line);
-		std::getline(ss, myStudentData.name, separator_char);
-		std::getline(ss, token, separator_char);
+		ss.str(line);
+		//get the name
+		std::getline(ss, myStudentData.name, char_to_search_for);
+		//get the midterm 1
+		std::getline(ss, token, char_to_search_for);
 		myStudentData.midterm1=stringToInt(token.c_str());
-		std::getline(ss, token, separator_char);
+		//get the midterm 2
+		std::getline(ss, token, char_to_search_for);
 		myStudentData.midterm2=stringToInt(token.c_str());
 		allstudentData.push_back(myStudentData);
 	}
-	myInputfile.close
 	return KP::SUCCESS;
 
-
-
-
 }
+
+
+
 /***
  * Iterates over all students in vector, and averages midterm1 and midterm2 to get the finalgrade
  * @param allstudentData
@@ -89,7 +88,7 @@ int calculateFinalGrade(std::vector<KP::studentData> &allstudentData){
 	if (allstudentData.empty()){
 		return KP::VECTOR_CONTAINS_NO_STUDENTS;
 	}
-	for(int a = 1; a <allstudentData.size(); a++){
+	for(int a = 1; a < allstudentData.size(); a++){
 		allstudentData[a].finalgrade = (allstudentData[a].midterm1+allstudentData[a].midterm2)/2;
 	}
 	return KP::SUCCESS;
@@ -107,34 +106,37 @@ int calculateFinalGrade(std::vector<KP::studentData> &allstudentData){
  *         COULD_NOT_OPEN_FILE
  *         SUCCESS
  */
-int writeFile(std::string &file, std::vector<KP::studentData> &allstudentData, char separator_char=KP::SEPERATOR_CHAR ){
-	ofstream myOutfile;
+
+int writeFile(std::string &file, std::vector<KP::studentData> &allstudentData, char char_to_search_for){
+	fstream myOutfile;
 	myOutfile.open(file);
 	if (!myOutfile.is_open()){
-			return KP::COULD_NOT_OPEN_FILE;
+		return KP::COULD_NOT_OPEN_FILE;
+	}
 	if(allstudentData.empty()){
-		return KP:VECTOR_CONTAINTS_NO_STUDENT;
-
+		return KP::VECTOR_CONTAINTS_NO_STUDENTS;
 	}
 	for(int a = 0 ; a < allstudentData.size();a++){
+
 		myOutfile << allstudentData[a].name;
 		myOutfile << " ";
-		myOutfile << allstudentData[a].midterm1
+		myOutfile << allstudentData[a].midterm1;
 		myOutfile << " ";
-		myOutfile << allstudentData[a].midterm2
+		myOutfile << allstudentData[a].midterm2;
 		myOutfile << " ";
-		myOutfile << allstudentData[a].finalgrade
-		if(!(i == (allstudentData.size() - 1))){
+		myOutfile << allstudentData[a].finalgrade;
+		if(!(a == (allstudentData.size() - 1))){
 			myOutfile << "\n";
 
 		}
 
 	}
 	myOutfile.close();
-	return KP:SUCCESS;
+	return KP::SUCCESS;
 
 
 }
+
 
 
 //sorts studentdata based on SORT_TYPE
@@ -145,8 +147,36 @@ int writeFile(std::string &file, std::vector<KP::studentData> &allstudentData, c
  * @return VECTOR_CONTAINS_NO_STUDENTS
  *         SUCCESS
  */
+bool compareName (KP:: studentData& x, KP:: studentData& y) {
+	return x.name < y.name;
+}
+// Used to sort the students from highest to lowest final grade
+bool compareFinal (KP:: studentData& x, KP:: studentData& y){
+	return x.finalgrade > y.finalgrade;
+}
 int sortStudentData(std::vector<KP::studentData> &allstudentData,KP::SORT_TYPE st){
+	KP::SORT_TYPE name = KP::NAME;
+	KP::SORT_TYPE finalgrade = KP::FINAL_GRADE;
 
+	//checks for an empty student data vector
+	if (allstudentData.size() < 2){
+		return KP::VECTOR_CONTAINS_NO_STUDENTS;;
+	}
+
+	if (st == name){
+		sort(allstudentData.begin(), allstudentData.end(), compareName);
+
+	}
+
+	if (st == finalgrade){
+		sort(allstudentData.begin(), allstudentData.end(), compareFinal);
+
+	}
+	return KP::SUCCESS;
+
+
+
+}
 //if myString does not contain a string rep of number returns 0
 //if int not large enough has undefined behaviour, very fragile
 
