@@ -49,16 +49,15 @@ double stringToDouble(const char *myString) {
  *         SUCCESS
  */
 int readFile(std::string &file, std::vector<KP::studentData> &allstudentData, char char_to_search_for) {
-	allstudentData.clear();
 
 	std::string line;
 	std::string token;
 	KP::studentData myStudentData;
 	stringstream ss;
 	ifstream myInputfile;
+	allstudentData.clear();
 
-	myInputfile.open(file.c_str(), ios::in);
-
+	myInputfile.open(file, ios::in);
 	if (!myInputfile.is_open()){
 		return KP::COULD_NOT_OPEN_FILE;
 	}
